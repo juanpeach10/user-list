@@ -28,22 +28,20 @@ class App extends Component {
   pushItem(id){
     this.setState({
       rowSelected: ++this.state.rowSelected,
-      idSelected: this.state.idSelected.concat(id)
+      idSelected: this.state.idSelected.concat(id.toString())
     });
   }
   popItem(id){
     let array = this.state.idSelected;
-    console.log("array", array);
-    let index = array.indexOf(Number(id));
-    let newArray = array.splice(index);
 
-    console.log("Id ", id);
-    console.log("indexof",index);
-    console.log("new array", newArray);
+    let i = array.indexOf(id.toString());
+    if(i != -1) {
+    	array.splice(i, 1);
+    }
 
     this.setState({
-      rowSelected: --this.state.rowSelected ,
-      idSelected: newArray
+      rowSelected: --this.state.rowSelected,
+      idSelected: array
     });
   }
   showSelected(e){
@@ -51,9 +49,19 @@ class App extends Component {
   }
   showOutput(){
     if (this.state.isConfirmed) {
-      console.log("Id selected: " +this.state.idSelected);
       let users = this.props.users.payload;
-      return(<div></div>);
+      let counter = 0;
+      let components = [];
+
+      for(var i in this.state.idSelected){
+        components.push(
+          <div key={i} className="output-box">
+            <p>{ "Name: " + this.props.users.payload[this.state.idSelected[i]].name }</p>
+            <p>{ "Email: " +this.props.users.payload[this.state.idSelected[i]].email  }</p>
+          </div>
+        );
+      }
+      return components;
     }
   }
   render() {
@@ -83,7 +91,10 @@ class App extends Component {
           className="waves-effect waves-light btn"
           onClick={ this.showSelected }>Confirm
           </button>
-          { this.showOutput() }
+          <div>
+            <h3>Output</h3>
+            { this.showOutput() }
+          </div>
         </div>
       );
     }
